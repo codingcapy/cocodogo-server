@@ -113,9 +113,38 @@ export async function createPost(req: Request, res: Response) {
 
 export async function getPosts(req: Request, res: Response) {
     try {
+        const allPosts = await Post.find({})
         const posts = await Post.find({}).limit(10)
         const pages: number[] = []
-        for (let i = 0; i < posts.length; ++i) {
+        for (let i = 0; i < allPosts.length; ++i) {
+            if (i % 10 == 0) {
+                pages.push(i / 10 + 1)
+            }
+        }
+        const comments = await Comment.find({})
+        const replies = await Reply.find({})
+        const postVotes = await PostVote.find({})
+        res.json({ posts, comments, replies, postVotes, pages });
+    }
+    catch (err) {
+        res.status(500).json({ msg: err })
+    }
+}
+
+export async function getMorePosts(req: Request, res: Response) {
+    try {
+        const page = parseInt(req.params.page);
+        let post = 0
+        if (page > 1) {
+            post = page * 10
+        }
+        else {
+            post = 1
+        }
+        const allPosts = await Post.find({})
+        const posts = await Post.find({ postId: { $gte: post, $lte: post + 9 } }).limit(10)
+        const pages: number[] = []
+        for (let i = 0; i < allPosts.length; ++i) {
             if (i % 10 == 0) {
                 pages.push(i / 10 + 1)
             }
