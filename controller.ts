@@ -114,16 +114,23 @@ export async function createPost(req: Request, res: Response) {
 export async function getPosts(req: Request, res: Response) {
     try {
         const allPosts = await Post.find({})
-        const posts = await Post.find({}).limit(10)
+        let post = 0
+        if (allPosts.length < 10) {
+            post = allPosts.length
+        }
+        else {
+            post = 10
+        }
+        const posts = await Post.find({postId: { $gte: 1, $lte: post}}).limit(10)
         const pages: number[] = []
         for (let i = 0; i < allPosts.length; ++i) {
             if (i % 10 == 0) {
                 pages.push(i / 10 + 1)
             }
         }
-        const comments = await Comment.find({})
-        const replies = await Reply.find({})
-        const postVotes = await PostVote.find({})
+        const comments = await Comment.find({postId: { $gte: 1, $lte: post}})
+        const replies = await Reply.find({postId: { $gte: 1, $lte: post}})
+        const postVotes = await PostVote.find({postId: { $gte: 1, $lte: post}})
         res.json({ posts, comments, replies, postVotes, pages });
     }
     catch (err) {
