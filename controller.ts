@@ -117,7 +117,7 @@ export async function getPosts(req: Request, res: Response) {
         const pages: number[] = []
         for (let i = 0; i < posts.length; ++i) {
             if (i % 10 == 0) {
-                pages.push(i / 10)
+                pages.push(i / 10 + 1)
             }
         }
         const comments = await Comment.find({})
