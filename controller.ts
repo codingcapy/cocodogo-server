@@ -156,9 +156,9 @@ export async function getMorePosts(req: Request, res: Response) {
                 pages.push(i / 10 + 1)
             }
         }
-        const comments = await Comment.find({})
-        const replies = await Reply.find({})
-        const postVotes = await PostVote.find({})
+        const comments = await Comment.find({postId: { $gte: post, $lte: post + 9 }})
+        const replies = await Reply.find({postId: { $gte: post, $lte: post + 9 }})
+        const postVotes = await PostVote.find({postId: { $gte: post, $lte: post + 9 }})
         res.json({ posts, comments, replies, postVotes, pages });
     }
     catch (err) {
