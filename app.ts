@@ -54,7 +54,7 @@ const job = new cron.CronJob("*/14 * * * *", () => {
     })
 })
 
-job.start()
+// job.start()
 
 async function start() {
     try {
